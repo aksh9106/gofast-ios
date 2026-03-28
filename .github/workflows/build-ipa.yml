@@ -25,12 +25,15 @@ jobs:
       - name: List schemes
         run: xcodebuild -list
 
-      - name: Build Archive
+      - name: Build Archive (No Signing)
         run: |
           xcodebuild -scheme GoFast \
             -configuration Release \
             -destination 'generic/platform=iOS' \
             -archivePath build/GoFast.xcarchive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
             clean archive
 
       - name: Export IPA
@@ -45,14 +48,15 @@ jobs:
               <key>compileBitcode</key>
               <false/>
               <key>signingStyle</key>
-              <string>automatic</string>
+              <string>manual</string>
           </dict>
           </plist>
           EOF
           xcodebuild -exportArchive \
             -archivePath build/GoFast.xcarchive \
             -exportPath build \
-            -exportOptionsPlist ExportOptions.plist
+            -exportOptionsPlist ExportOptions.plist \
+            -allowProvisioningUpdates
         continue-on-error: true
 
       - name: Show build output
