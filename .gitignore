@@ -1,0 +1,26 @@
+# Xcode
+.DS_Store
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# CocoaPods
+Pods/
+
+# Carthage
+Carthage/Build/
+
+# Build outputs
+build/
+*.xcarchive
+
+# Export options with sensitive info
+ExportOptions.plist
+
+# Zip archives
+*.zip
