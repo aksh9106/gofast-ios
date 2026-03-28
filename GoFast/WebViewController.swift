@@ -14,7 +14,7 @@ class WebViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
     private var progressView: UIProgressView!
     private var refreshControl: UIRefreshControl!
     
-    private let targetURL = URL(string: "https://gofastdelivery.mu/driver-enhanced.html")!
+    private let targetURL = URL(string: "https://gofastf696.ovh/driver.html")!
     
     override func loadView() {
         let webConfiguration = WKWebViewConfiguration()
