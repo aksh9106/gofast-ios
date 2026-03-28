@@ -13,19 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Show directory structure
-        run: |
-          echo "=== Current directory ==="
-          pwd
-          echo "=== Files ==="
-          ls -la
-          echo "=== Xcode version ==="
-          xcodebuild -version
-
-      - name: List schemes
-        run: xcodebuild -list
-
-      - name: Build Archive (No Signing)
+      - name: Build Archive
         run: |
           xcodebuild -scheme GoFast \
             -configuration Release \
@@ -36,34 +24,13 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             clean archive
 
-      - name: Export IPA
+      - name: Create IPA from Archive
         run: |
-          cat > ExportOptions.plist <<EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>method</key>
-              <string>development</string>
-              <key>compileBitcode</key>
-              <false/>
-              <key>signingStyle</key>
-              <string>manual</string>
-          </dict>
-          </plist>
-          EOF
-          xcodebuild -exportArchive \
-            -archivePath build/GoFast.xcarchive \
-            -exportPath build \
-            -exportOptionsPlist ExportOptions.plist \
-            -allowProvisioningUpdates
-        continue-on-error: true
-
-      - name: Show build output
-        run: |
-          echo "=== Build directory ==="
-          ls -la build/ || echo "No build dir"
-          find . -name "*.ipa" 2>/dev/null
+          cd build
+          mkdir -p Payload
+          cp -r GoFast.xcarchive/Products/Applications/GoFast.app Payload/
+          zip -r GoFast.ipa Payload
+          rm -rf Payload
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
@@ -71,4 +38,10 @@ jobs:
           name: GoFast-Driver
           path: build/GoFast.ipa
           retention-days: 90
-        if: always()
+
+      - name: Upload XCArchive
+        uses: actions/upload-artifact@v4
+        with:
+          name: GoFast-Archive
+          path: build/GoFast.xcarchive
+          retention-days: 90
